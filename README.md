@@ -82,8 +82,10 @@ $(function() {
 });
 ```
 
+Events
+-----
 When a users state changes a custom events get triggered. There are several parameters
-passed to your handler for you to use
+passed to your handler for you to use.
 
 ```javascript
 $(function() {
