@@ -84,7 +84,8 @@
              */
             handleEvent = function (e) {
                 var obj = $.data(elem, "idleTimerObj") || {};
-
+		    
+		// ignore writting to storage unless related to idleTimer
                 if (e.type === "storage" && e.originalEvent.key !== obj.timerSyncId) {
                     return;
                 }
@@ -282,7 +283,9 @@
         }
 
 	// Test via a getter in the options object to see if the passive property is accessed
-        var supportsPassive = false;
+    	// This isnt working in jquery, though is planned for 4.0
+        // https://github.com/jquery/jquery/issues/2871
+        /*var supportsPassive = false;
         try {
             var Popts = Object.defineProperty({}, "passive", {
                 get: function() {
@@ -291,7 +294,8 @@
             });
             window.addEventListener("test", null, Popts);
         } catch (e) {}
-
+	*/
+	    
         /* (intentionally not documented)
          * Handles a user event indicating that the user isn't idle. namespaced with internal idleTimer
          * @param {Event} event A DOM2-normalized event object.
@@ -299,7 +303,8 @@
          */
         jqElem.on($.trim((opts.events + " ").split(" ").join("._idleTimer ")), function (e) {
             handleEvent(e);
-        }, supportsPassive ? { passive: true } : false);
+        });
+        //}, supportsPassive ? { passive: true } : false);
 
         if (opts.timerSyncId) {
             $(window).bind("storage", handleEvent);
