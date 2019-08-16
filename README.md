@@ -46,6 +46,8 @@ $(function() {
 });
 ```
 
+Options
+-----
 You can configure the settings several ways
 
 ```javascript
@@ -116,6 +118,8 @@ $(function() {
 });
 ```
 
+Methods
+-----
 There are several methods to invoke
 
 ```javascript
