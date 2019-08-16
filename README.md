@@ -8,7 +8,7 @@ jQuery Idle Timer Plugin
 
 Demo
 --------
-http://thorst.github.io/jquery-idletimer/index.html
+https://thorst.github.io/jquery-idletimer/index.html
 
 Download
 --------
