@@ -161,6 +161,47 @@
 			$(window).trigger(e);
 		}, 100 );
 	});
+    asyncTest( "storage triggers active on matching timerSyncId, unique id does not matter", 4, function() {
+        localStorage.clear();
+        var oneFinished = false;
+        $( document ).on( "active.idleTimersomeUniqueString", function(event, elem, obj){
+
+            ok(true, "active fires at document");
+            ok(!obj.idle, "object returned properly");
+
+            if (oneFinished) {
+                $.idleTimer("destroy", "someUniqueString");
+                $(document).off();
+                start();
+            }
+            oneFinished = true;
+        });
+        $( document ).on( "active.idleTimeranotherUniqueString", function(event, elem, obj){
+
+            ok(true, "active fires at document");
+            ok(!obj.idle, "object returned properly");
+
+
+            if (oneFinished) {
+                $.idleTimer("destroy", "anotherUniqueString");
+                $(document).off();
+                start();
+            }
+            oneFinished = true;
+        });
+        $.idleTimer( {idle:true, timerSyncId: "timer-storage-event-test"}, document, "someUniqueString");
+        $.idleTimer( {idle:true, timerSyncId: "timer-storage-event-test"}, document, "anotherUniqueString");
+        setTimeout( function() {
+            var e = $.Event("storage");
+            // simulate a storage event for this timer's sync ID
+            e.originalEvent = {
+                key: "timer-storage-event-test",
+                oldValue: "1",
+                newValue: "2"
+            };
+            $(window).trigger(e);
+        }, 100 );
+    });
 
 	/*
 	Need to actually test pause/resume/reset, not just thier return type
