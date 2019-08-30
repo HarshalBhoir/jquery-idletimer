@@ -32,6 +32,19 @@
 		});
 		$.idleTimer( 100 );
 	});
+	asyncTest("idle Event Triggered when using unique id", 2, function () {
+		$(document).on("idle.idleTimersomeUniqueString", function (event, elem, obj) {
+
+			ok(true, "idle fires at document");
+			ok(obj.idle, "object returned properly");
+
+			$.idleTimer("destroy", document, "someUniqueString");
+			$(document).off();
+
+			start();
+		});
+		$.idleTimer( 100, document, "someUniqueString" );
+	});
 	asyncTest( "active Event Triggered", 2, function() {
 		$( document ).on( "active.idleTimer", function(event, elem, obj){
 
@@ -64,6 +77,35 @@
 			start();
 		});
 		$("#qunit-fixture").idleTimer(100);
+	});
+	asyncTest("idle Triggered with multiple idle timers", 4, function () {
+		var oneFinished = false;
+		$("#qunit-fixture").on("idle.idleTimersomeUniqueString", function (event, elem, obj) {
+
+			ok(true, "idle fires at document");
+			ok(obj.idle, "object returned properly");
+
+			$("#qunit-fixture").idleTimer("destroy", "someUniqueString");
+
+			if (oneFinished) {
+				start();
+			}
+			oneFinished = true;
+		});
+		$("#qunit-fixture").on("idle.idleTimeranotherUniqueString", function (event, elem, obj) {
+
+			ok(true, "idle fires at document");
+			ok(obj.idle, "object returned properly");
+
+			$("#qunit-fixture").idleTimer("destroy", "anotherUniqueString");
+
+			if (oneFinished) {
+				start();
+			}
+			oneFinished = true;
+		});
+		$("#qunit-fixture").idleTimer(100, "someUniqueString");
+		$("#qunit-fixture").idleTimer(100, "anotherUniqueString");
 	});
 	asyncTest("active Triggered", 2, function () {
 		$("#qunit-fixture").on("active.idleTimer", function (event, elem, obj) {
@@ -160,6 +202,27 @@
 			ok($(document).idleTimer("isIdle"), "timer inactive");
 
 			$.idleTimer("destroy");
+			$(document).off();
+
+			start();
+		}, 200);
+	});
+
+	asyncTest("Resume works and is a jQuery instance when using unique id", 4, function () {
+
+		$.idleTimer(100, document, "someUniqueString");
+
+		$.idleTimer("pause");
+		equal(typeof $.idleTimer("resume", document, "someUniqueString").jquery, "string", "resume should be jquery");
+
+		$.idleTimer("pause");
+		equal(typeof $(document).idleTimer("resume", "someUniqueString").jquery, "string", "resume should be jquery");
+
+		setTimeout(function () {
+			ok($.idleTimer("isIdle", document, "someUniqueString"), "timer inactive");
+			ok($(document).idleTimer("isIdle", "someUniqueString"), "timer inactive");
+
+			$.idleTimer("destroy", "someUniqueString");
 			$(document).off();
 
 			start();
