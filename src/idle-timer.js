@@ -301,13 +301,13 @@
          * @param {Event} event A DOM2-normalized event object.
          * @return {void}
          */
-        jqElem.on($.trim((opts.events + " ").split(" ").join("._idleTimer ")), function (e) {
+        jqElem.on((opts.events + " ").split(" ").join("._idleTimer ").trim(), function (e) {
             handleEvent(e);
         });
         //}, supportsPassive ? { passive: true } : false);
 
         if (opts.timerSyncId) {
-            $(window).bind("storage", handleEvent);
+            $(window).on("storage", handleEvent);
         }
 
         // Internal Object Properties, This isn't all necessary, but we
