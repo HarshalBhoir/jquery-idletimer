@@ -1,6 +1,6 @@
-/*! Idle Timer - v1.1.0 - 2020-06-25
+/*! Idle Timer - v1.1.0 - 2016-03-21
 * https://github.com/thorst/jquery-idletimer
-* Copyright (c) 2020 Paul Irish; Licensed MIT */
+* Copyright (c) 2016 Paul Irish; Licensed MIT */
 /*
 	mousewheel (deprecated) -> IE6.0, Chrome, Opera, Safari
 	DOMMouseScroll (deprecated) -> Firefox 1.0
@@ -67,7 +67,6 @@
             handleEvent = function (e) {
                 var obj = $.data(elem, "idleTimerObj") || {};
 
-		// ignore writting to storage unless related to idleTimer
                 if (e.type === "storage" && e.originalEvent.key !== obj.timerSyncId) {
                     return;
                 }
@@ -264,32 +263,17 @@
             return obj.idle;
         }
 
-	// Test via a getter in the options object to see if the passive property is accessed
-	// This isnt working in jquery, though is planned for 4.0
-	// https://github.com/jquery/jquery/issues/2871
-        /*var supportsPassive = false;
-        try {
-            var Popts = Object.defineProperty({}, "passive", {
-                get: function() {
-                    supportsPassive = true;
-                }
-            });
-            window.addEventListener("test", null, Popts);
-        } catch (e) {}
-	*/
-
         /* (intentionally not documented)
          * Handles a user event indicating that the user isn't idle. namespaced with internal idleTimer
          * @param {Event} event A DOM2-normalized event object.
          * @return {void}
          */
-        jqElem.on((opts.events + " ").split(" ").join("._idleTimer ").trim(), function (e) {
+        jqElem.on($.trim((opts.events + " ").split(" ").join("._idleTimer ")), function (e) {
             handleEvent(e);
         });
-        //}, supportsPassive ? { passive: true } : false);
 
         if (opts.timerSyncId) {
-            $(window).on("storage", handleEvent);
+            $(window).bind("storage", handleEvent);
         }
 
         // Internal Object Properties, This isn't all necessary, but we
