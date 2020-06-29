@@ -10,10 +10,10 @@ module.exports = function(grunt) {
       "<%= grunt.template.today('yyyy-mm-dd') %>\n" +
       "<%= pkg.homepage ? '* ' + pkg.homepage + '\\n' : '' %>" +
       "* Copyright (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %>;" +
-      " Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n",
+      " Licensed <%= pkg.licenses.map(o => o['type']).join(', ') %> */\n",
     minbanner: "/*! <%= pkg.title || pkg.name %> v<%= pkg.version %> <%= grunt.template.today('yyyy-mm-dd') %> | " +
-      "<%= pkg.homepage ? pkg.homepage : '' %> | (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %> | " + 
-      "Licensed <%= _.pluck(pkg.licenses, 'type').join(', ') %> */\n",
+      "<%= pkg.homepage ? pkg.homepage : '' %> | (c) <%= grunt.template.today('yyyy') %> <%= pkg.author.name %> | " +
+      "Licensed <%= pkg.licenses.map(o => o['type']).join(', ') %> */\n",
     // Task configuration.
     concat: {
       options: {
@@ -50,20 +50,13 @@ module.exports = function(grunt) {
           ]
       },
     },
-    qunit: {
-		options: {
-			timeout: 30000,
-			"--web-security": "no",
-			coverage: {
-				src: [ "src/<%= pkg.name %>.js" ],
-				instrumentedFiles: "temp/",
-				htmlReport: "build/report/coverage",
-				lcovReport: "build/report/lcov",
-				linesThresholdPct: 0
-			}
-		},
-		files: ["test/**/*.html"]
-    },
+  qunit: {
+    all: {
+      options: {
+        urls:["test/idle-timer.html"]
+      }
+    }
+  },
 	coveralls: {
 		options: {
 			// dont fail if coveralls fails
@@ -76,19 +69,22 @@ module.exports = function(grunt) {
     jshint: {
       gruntfile: {
         options: {
-          jshintrc: ".jshintrc"
+          jshintrc: ".jshintrc",
+          reporterOutput: ""
         },
         src: "Gruntfile.js"
       },
       src: {
         options: {
-          jshintrc: "src/.jshintrc"
+          jshintrc: "src/.jshintrc",
+          reporterOutput: ""
         },
         src: ["src/**/*.js"]
       },
       test: {
         options: {
-          jshintrc: "test/.jshintrc"
+          jshintrc: "test/.jshintrc",
+          reporterOutput: ""
         },
         src: ["test/**/*.js"]
       },
@@ -112,7 +108,7 @@ module.exports = function(grunt) {
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-coveralls");
-  grunt.loadNpmTasks("grunt-qunit-istanbul");
+  grunt.loadNpmTasks("grunt-contrib-qunit");
   grunt.loadNpmTasks("grunt-contrib-concat");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-watch");

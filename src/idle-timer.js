@@ -53,7 +53,7 @@
         opts = $.extend({
             idle: false,                // indicates if the user is idle
             timeout: 30000,             // the amount of time (ms) before the user is considered idle
-            events: "mousemove keydown wheel DOMMouseScroll mousewheel mousedown" // define active events
+            events: "mousemove keydown wheel DOMMouseScroll mousewheel mousedown touchstart touchmove MSPointerDown MSPointerMove" // define active events
         }, opts);
 
         var jqElem = $(elem),
@@ -85,9 +85,10 @@
              * @static
              */
             handleEvent = function (e) {
+
                 var obj = $.data(elem, "idleTimerObj" + uniqueId) || {};
                 
-		// ignore writting to storage unless related to idleTimer
+		            // ignore writting to storage unless related to idleTimer
                 if (e.type === "storage" && e.originalEvent.key !== obj.timerSyncId) {
                     return;
                 }
@@ -297,19 +298,20 @@
             window.addEventListener("test", null, Popts);
         } catch (e) {}
 	*/
-        
+
         /* (intentionally not documented)
          * Handles a user event indicating that the user isn't idle. namespaced with internal idleTimer
          * @param {Event} event A DOM2-normalized event object.
          * @return {void}
          */
-        jqElem.on($.trim((opts.events + " ").split(" ").join("._idleTimer" + uniqueId + " ")), function (e) {
+        jqElem.on((opts.events + " ").split(" ").join("._idleTimer" + uniqueId + " ").trim(), function (e) {
+
             handleEvent(e);
         });
         //}, supportsPassive ? { passive: true } : false);
 
         if (opts.timerSyncId) {
-            $(window).bind("storage", handleEvent);
+            $(window).on("storage", handleEvent);
         }
 
         // Internal Object Properties, This isn't all necessary, but we
