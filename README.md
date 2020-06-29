@@ -159,7 +159,35 @@ $(function() {
     $( document ).idleTimer("isIdle");
 });
 ```
+Using multiple idle monitors
+-----
+When using multiple idle monitors on the same element, a unique id needs be used for each one.
 
+####Options
+```javascript
+$(function() {
+    // idleTimer() takes an optional string argument that allows using multiple timers on the same element
+    $( document ).idleTimer( 10000, "someUniqueId" );
+    // equivalent
+    $.idleTimer(10000, document, "someUniqueId");
+});
+```
+####Methods
+```javascript
+$(function() {
+    var uniqueId = "someUniqueString";
+    $( document ).idleTimer("pause", uniqueId); // same for other methods like destroy, reset, ...
+});
+```
+####Events
+```javascript
+$(function() {
+    var uniqueId = "someUniqueString";
+    $( document ).on( "idle.idleTimer" + uniqueId, function(event, elem, obj){ // same for the active event
+        // function you want to fire for the idle timer with matching unique id on that element
+    });
+});
+```
 Pre-Req
 -------
 jQuery 1.7 (tested with 1.11.0)
